@@ -1,0 +1,69 @@
+const listaAmigos = [];
+const ulAmigos = document.getElementById('listaAmigos');
+const ulResultado = document.getElementById('resultado');
+
+function adicionarAmigo() {
+    const input = document.getElementById('amigo');
+    const nome = input.value.trim();
+
+    if (nome === '') {
+        alert('Digite um nome válido!');
+        return;
+    }
+
+    if (listaAmigos.includes(nome)) {
+        alert('Esse nome já foi adicionado.');
+        return;
+    }
+
+    listaAmigos.push(nome);
+
+    const li = document.createElement('li');
+    li.textContent = nome;
+    ulAmigos.appendChild(li);
+
+    input.value = '';
+    input.focus();
+}
+
+function sortearAmigo() {
+    if (listaAmigos.length < 2) {
+        alert('Adicione pelo menos 2 amigos para sortear.');
+        return;
+    }
+
+    let sorteio = [];
+    let tentativas = 0;
+    do {
+        sorteio = embaralhar([...listaAmigos]);
+        tentativas++;
+        if (tentativas > 100) {
+            alert("Não foi possível sortear corretamente. Tente novamente.");
+            return;
+        }
+    } while (!validaSorteio(listaAmigos, sorteio));
+
+    ulResultado.innerHTML = '';
+    for (let i = 0; i < listaAmigos.length; i++) {
+        const li = document.createElement('li');
+        li.textContent = `${listaAmigos[i]} → ${sorteio[i]}`;
+        ulResultado.appendChild(li);
+    }
+}
+
+function embaralhar(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function validaSorteio(original, sorteado) {
+    for (let i = 0; i < original.length; i++) {
+        if (original[i] === sorteado[i]) {
+            return false;
+        }
+    }
+    return true;
+}
